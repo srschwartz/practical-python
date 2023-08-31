@@ -19,18 +19,16 @@ import sys
 
 def portfolio_cost(filename):
     total_cost = 0.0
-    ctr = 0
     with open(filename, 'rt') as f:
         rows = csv.reader(f)
         headers = next(rows)
-        for line in rows:
-            ctr += 1
+        for number, line in enumerate(rows, start=1):
             try:
                 shares = int(line[1])
                 price = float(line[2])
                 total_cost += shares * price
             except ValueError:
-                print('ValueError at row', ctr)
+                print(f'Row {number}: Bad row: {line}')
 
         return total_cost
 
