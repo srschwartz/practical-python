@@ -14,7 +14,7 @@ def read_portfolio(filename):
         headers = next(rows)
         for number, row in enumerate(rows, start=1):
             rec = dict(zip(headers, row))
-            holding = {'name': row['name'], 'shares': int(row['shares']), 'price': float(row['price'])}
+            holding = {'name': rec['name'], 'shares': int(rec['shares']), 'price': float(rec['price'])}
             portfolio.append(holding)
         return portfolio
 
