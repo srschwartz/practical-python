@@ -4,12 +4,16 @@
 
 import csv
 
-def parse_csv(filename, types=None, select=None, has_headers=False, delimiter=','):
+def parse_csv(filename, types=None, select=None, has_headers=False, delimiter=',', silence_errors=False):
     '''
     Parse a CSV file into a list of records
     '''
     with open(filename) as f:
         rows = csv.reader(f, delimiter=delimiter)
+
+        # If select = True and has_headers = False, raise an error
+        if select and not has_headers:
+            raise RuntimeError("Select argument requires column headers")
 
         # If has_headers, read column headers
         if has_headers:
@@ -25,7 +29,7 @@ def parse_csv(filename, types=None, select=None, has_headers=False, delimiter=',
             indices = []
 
         records = []
-        for row in rows:
+        for rowno, row in enumerate(rows, 1):
             if not row:    # Skip rows with no data
                 continue
 
@@ -33,9 +37,14 @@ def parse_csv(filename, types=None, select=None, has_headers=False, delimiter=',
             if select:
                 row = [row[index] for index in indices]
 
-            # Convert data to types specified
+            # Convert data to types specified, if there is a value error print the reason
             if types:
-                row = [func(val) for func, val in zip(types, row)]
+                try:
+                    row = [func(val) for func, val in zip(types, row)]
+                except ValueError as e:
+                    if not silence_errors:
+                        print(f"Could not convert Row {rowno}: {row}, for reason: {e}")
+                    continue
 
             # Make a dictionary or a tuple depending on file structure
             if has_headers:
@@ -46,5 +55,5 @@ def parse_csv(filename, types=None, select=None, has_headers=False, delimiter=',
 
     return records
 
-portfolio = parse_csv('Data/portfolio.csv', types=[str, float], select=['name', 'shares'], has_headers=True)
+portfolio = parse_csv('Data/missing.csv', types=[str, int, float], has_headers=True, silence_errors=True)
 print(portfolio)
