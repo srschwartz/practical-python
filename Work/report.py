@@ -8,6 +8,13 @@ from pprint import pprint
 from fileparse import parse_csv
 
 
+def read_portfolio(filename):
+    portfolio = []
+    f = parse_csv(filename, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
+    for row in f:
+        portfolio.append(row)
+    return portfolio
+
 def read_prices(filename):
     prices = {}
     f = parse_csv(filename, types=[str, float])
@@ -31,7 +38,7 @@ def make_report(portfolio, prices):
     return stonks
 
 def portfolio_report(portfolio_filename, prices_filename):
-    portfolio = parse_csv(portfolio_filename, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
+    portfolio = read_portfolio(portfolio_filename)
     prices = read_prices(prices_filename)
     report = make_report(portfolio, prices)
     for row in report:
