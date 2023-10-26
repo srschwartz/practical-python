@@ -5,29 +5,15 @@
 import csv
 import sys
 from pprint import pprint
-
-
-def read_portfolio(filename):
-    portfolio = []
-    with open(filename) as f:
-        rows = csv.reader(f)
-        headers = next(rows)
-        for row in rows:
-            holding = {'name': row[0], 'shares': int(row[1]), 'price': float(row[2])}
-            portfolio.append(holding)
-        return portfolio
+from fileparse import parse_csv
 
 
 def read_prices(filename):
     prices = {}
-    with open(filename) as f:
-        rows = csv.reader(f)
-        for row in rows:
-            try:
-                prices[row[0]] = float(row[1])
-            except IndexError:
-                pass
-        return prices
+    f = parse_csv(filename, types=[str, float])
+    for name, price in f:
+        prices[name] = price
+    return prices
 
 def make_report(portfolio, prices):
     stonks = []
@@ -45,7 +31,7 @@ def make_report(portfolio, prices):
     return stonks
 
 def portfolio_report(portfolio_filename, prices_filename):
-    portfolio = read_portfolio(portfolio_filename)
+    portfolio = parse_csv(portfolio_filename, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
     prices = read_prices(prices_filename)
     report = make_report(portfolio, prices)
     for row in report:
