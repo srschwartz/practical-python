@@ -9,18 +9,12 @@ from fileparse import parse_csv
 
 
 def read_portfolio(filename):
-    portfolio = []
-    f = parse_csv(filename, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
-    for row in f:
-        portfolio.append(row)
-    return portfolio
+    with open(filename) as csv:
+        return parse_csv(csv, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
 
 def read_prices(filename):
-    prices = {}
-    f = parse_csv(filename, types=[str, float])
-    for name, price in f:
-        prices[name] = price
-    return prices
+    with open(filename) as csv:
+        return dict(parse_csv(csv, types=[str, float]))
 
 def make_report(portfolio, prices):
     stonks = []
