@@ -5,72 +5,45 @@
 import csv
 import sys
 from pprint import pprint
+from fileparse import parse_csv
 
 
 def read_portfolio(filename):
-    portfolio = []
-    with open(filename) as f:
-        rows = csv.reader(f)
-        headers = next(rows)
-        for number, row in enumerate(rows, start=1):
-            rec = dict(zip(headers, row))
-            holding = {'name': rec['name'], 'shares': int(rec['shares']), 'price': float(rec['price'])}
-            portfolio.append(holding)
-        return portfolio
-
+    with open(filename) as csv:
+        return parse_csv(csv, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
 
 def read_prices(filename):
-    prices = {}
-    with open(filename) as f:
-        rows = csv.reader(f)
-        for row in rows:
-            try:
-                prices[row[0]] = float(row[1])
-            except IndexError:
-                pass
-        return prices
-
-
-# total_cost = 0.0
-# for line in portfolio:
-#     total_cost += line['shares'] * line['price']
-#
-# current_value = 0.0
-# for line in portfolio:
-#     n = line['name']
-#     current_value += line['shares'] * prices[n]
-#
-#
-# print('Original cost', total_cost)
-# print('Current value', current_value)
-# gain = current_value - total_cost
-# print('Gain', gain)
-# if gain > 0:
-#     print('Hooray!')
-# else:
-#     print('Oh no')
+    with open(filename) as csv:
+        return dict(parse_csv(csv, types=[str, float]))
 
 def make_report(portfolio, prices):
     stonks = []
+    headers = (f'{"Name":>10s} {"Shares":>10s} {"Prices":>10s} {"Change":>10s}')
+    l = '---------- ---------- ---------- -----------'
+    stonks.append(headers)
+    stonks.append(l)
     for s in portfolio:
         name = s['name']
         shares = s['shares']
         price = prices[s['name']]
         change = price - s['price']
-        line = (name, shares, price, change)
+        line = (f'{name:>10s} {shares:>10d} {price:>10.2f} {change:>10.2f}')
         stonks.append(line)
     return stonks
 
-portfolio = read_portfolio('Data/portfolio.csv')
-prices = read_prices('Data/prices.csv')
+def portfolio_report(portfolio_filename, prices_filename):
+    portfolio = read_portfolio(portfolio_filename)
+    prices = read_prices(prices_filename)
+    report = make_report(portfolio, prices)
+    for row in report:
+        print(row)
+        
+def main(args):
+    if len(args) != 3:
+        raise SystemExit('Usage: %s portfile pricefile' % args[0])
+    portfolio_report(args[1], args[2])
 
-report = make_report(portfolio, prices)
+if __name__ == '__main__':
+    import sys
+    main(sys.argv)
 
-headers = ('Name', 'Shares', 'Price', 'Change')
-l = '---------- ---------- ---------- -----------'
-
-print('%10s %10s %10s %10s' % headers)
-print(l)
-for name, shares, price, change in report:
-    p = str('%0.2f' % price)
-    print(f'{name:>10s} {shares:>10d} {("$" + p):>10s} {change:>10.2f}')

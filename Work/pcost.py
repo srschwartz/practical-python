@@ -2,41 +2,28 @@
 #
 # Exercise 1.27
 
-
-# with open('Data/portfolio.csv', 'rt') as f:
-#     headers = next(f)
-#     for line in f:
-#         row = line.split(',')
-#         print(row)
-#         shares = int(row[1])
-#         price = float(row[2])
-#         total_cost += shares * price
-#
-# print('Total cost is', round(total_cost, ndigits=2))
 import csv
 import sys
-
+from report import read_portfolio
 
 def portfolio_cost(filename):
     total_cost = 0.0
-    with open(filename, 'rt') as f:
-        rows = csv.reader(f)
-        headers = next(rows)
-        for number, line in enumerate(rows, start=1):
-            record = dict(zip(headers, line))
-            try:
-                shares = int(record['shares'])
-                price = float(record['price'])
-                total_cost += shares * price
-            except ValueError:
-                print(f'Row {number}: Bad row: {line}')
+    f = read_portfolio(filename)
+    for line in f:
+        shares = line['shares']
+        price = line['price']
+        total_cost += shares * price
+    return total_cost
 
-        return total_cost
+def main(args):
+    if len(args) != 2:
+        raise SystemExit('Usage: %s filename' % args[0])
+    p = portfolio_cost(args[1])
+    print('Total cost is: ', p)
 
-if len(sys.argv) == 2:
-    filename = sys.argv[1]
-else:
-    filename = 'Data/portfolio.csv'
 
-cost = portfolio_cost(filename)
-print('Total cost is', cost)
+if __name__ == '__main__':
+    import sys
+    main(sys.argv)
+
+
