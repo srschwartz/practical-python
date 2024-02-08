@@ -56,6 +56,9 @@ class FormatError(Exception):
     pass
 
 def create_formatter(name):
+    '''
+    Create a custom format for table output
+    '''
     if name == 'txt':
         return TextTableFormatter()
     elif name == 'csv':
@@ -66,6 +69,9 @@ def create_formatter(name):
         raise FormatError(f'Unknown table format {name}')
 
 def print_table(object, columns, formatter):
+    '''
+    Print a table with file data
+    '''
     formatter.headings(columns)
     for line in object:
         linedata = [str(getattr(line, name)) for name in columns]
