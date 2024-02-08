@@ -11,9 +11,9 @@ from stock import Stock
 
 def read_portfolio(filename):
     with open(filename) as csv:
-    p = parse_csv(csv, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
-    portfolio = [Stock(line['name'], line['shares'], line['price']) for line in p]
-    return portfolio
+        p = parse_csv(csv, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
+        portfolio = [Stock(line['name'], line['shares'], line['price']) for line in p]
+        return portfolio
 
 def read_prices(filename):
     with open(filename) as csv:
