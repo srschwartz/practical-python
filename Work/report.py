@@ -6,11 +6,14 @@ import csv
 import sys
 from pprint import pprint
 from fileparse import parse_csv
+from stock import Stock
 
 
 def read_portfolio(filename):
     with open(filename) as csv:
-        return parse_csv(csv, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
+    p = parse_csv(csv, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
+    portfolio = [Stock(line['name'], line['shares'], line['price']) for line in p]
+    return portfolio
 
 def read_prices(filename):
     with open(filename) as csv:
@@ -23,10 +26,10 @@ def make_report(portfolio, prices):
     stonks.append(headers)
     stonks.append(l)
     for s in portfolio:
-        name = s['name']
-        shares = s['shares']
-        price = prices[s['name']]
-        change = price - s['price']
+        name = s.name
+        shares = s.shares
+        price = prices[s.name]
+        change = price - s.price
         line = (f'{name:>10s} {shares:>10d} {price:>10.2f} {change:>10.2f}')
         stonks.append(line)
     return stonks

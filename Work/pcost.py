@@ -7,12 +7,8 @@ import sys
 from report import read_portfolio
 
 def portfolio_cost(filename):
-    total_cost = 0.0
-    f = read_portfolio(filename)
-    for line in f:
-        shares = line['shares']
-        price = line['price']
-        total_cost += shares * price
+    portfolio = read_portfolio(filename)
+    total_cost = sum([p.cost] for p in portfolio)
     return total_cost
 
 def main(args):
