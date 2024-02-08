@@ -21,6 +21,7 @@ def main(args):
     p = portfolio_cost(args[1])
     print('Total cost is: ', p)
 
+
 if __name__ == '__main__':
     import sys
     main(sys.argv)
