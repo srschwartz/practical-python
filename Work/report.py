@@ -6,11 +6,14 @@ import csv
 import sys
 from pprint import pprint
 from fileparse import parse_csv
-
+from stock import Stock
+import tableformat
 
 def read_portfolio(filename):
     with open(filename) as csv:
-        return parse_csv(csv, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
+        p = parse_csv(csv, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
+        portfolio = [Stock(line['name'], line['shares'], line['price']) for line in p]
+        return portfolio
 
 def read_prices(filename):
     with open(filename) as csv:
@@ -18,30 +21,38 @@ def read_prices(filename):
 
 def make_report(portfolio, prices):
     stonks = []
-    headers = (f'{"Name":>10s} {"Shares":>10s} {"Prices":>10s} {"Change":>10s}')
-    l = '---------- ---------- ---------- -----------'
-    stonks.append(headers)
-    stonks.append(l)
     for s in portfolio:
-        name = s['name']
-        shares = s['shares']
-        price = prices[s['name']]
-        change = price - s['price']
-        line = (f'{name:>10s} {shares:>10d} {price:>10.2f} {change:>10.2f}')
+        name = s.name
+        shares = s.shares
+        price = prices[s.name]
+        change = price - s.price
+        line = (name, shares, price, change)
         stonks.append(line)
     return stonks
 
-def portfolio_report(portfolio_filename, prices_filename):
+def print_report(data, formatter):
+    formatter.headings(['Name', 'Shares', 'Price', 'Change'])
+    for name, shares, price, change in data:
+        rowdata = [name, str(shares), f'{price:0.2f}', f'{change:0.2f}']
+        formatter.row(rowdata)
+
+def portfolio_report(portfolio_filename, prices_filename, fmt='txt'):
+    
+    # Read data files
     portfolio = read_portfolio(portfolio_filename)
     prices = read_prices(prices_filename)
+
+    # Make report
     report = make_report(portfolio, prices)
-    for row in report:
-        print(row)
+
+    # Print formatted report
+    formatter = tableformat.create_formatter(fmt)
+    print_report(report, formatter)
         
 def main(args):
-    if len(args) != 3:
-        raise SystemExit('Usage: %s portfile pricefile' % args[0])
-    portfolio_report(args[1], args[2])
+    if len(args) != 4:
+        raise SystemExit('Usage: %s portfile pricefile format' % args[0])
+    portfolio_report(args[1], args[2], args[3])
 
 if __name__ == '__main__':
     import sys
