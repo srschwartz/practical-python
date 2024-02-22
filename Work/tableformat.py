@@ -74,6 +74,6 @@ def print_table(object, columns, formatter):
     '''
     formatter.headings(columns)
     for line in object:
-        linedata = [str(getattr(line, name)) for name in columns]
+        linedata = [getattr(line, name) for name in columns]
         formatter.row(linedata)
     
