@@ -3,7 +3,7 @@ import time
 
 def follow(filename):
     '''
-        Generic follow function
+        Generic generator function
     '''
     f = open(filename, 'r')
     f.seek(0, os.SEEK_END)   # Move file pointer 0 bytes from end of file
