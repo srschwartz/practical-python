@@ -15,22 +15,16 @@ def convert_types(rows, types):
         yield [func(val) for func, val in zip(types, row)]
 
 def make_dicts(rows, headers):
-    for row in rows:
-        yield dict(zip(headers, row))
+    return (dict(zip(headers, row)) for row in rows)
 
 def select_columns(rows, indices):
     for row in rows:
         yield [row[index] for index in indices]
 
-def filter_symbols(rows, names):
-    for row in rows:
-        if row['name'] in names:
-            yield row
-
 def ticker(portfile, logfile, fmt):
     portfolio = report.read_portfolio(portfile)
     rows = parse_stock_data(follow(logfile))
-    rows = filter_symbols(rows, portfolio)
+    rows = (row for row in rows if row['name'] in portfolio)
     formatter = tableformat.create_formatter(fmt)
     formatter.headings(['Name', 'Price', 'Change'])
     for row in rows:
