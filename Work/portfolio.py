@@ -8,6 +8,11 @@ class Portfolio:
     def __init__(self):
         self._holdings = []
 
+    def append(self, holding):
+        if not isinstance(holding, stock.Stock):
+            raise TypeError('Expected a Stock instance')
+        self._holdings.append(holding)
+
     @classmethod
     def from_csv(cls, lines, **opts):
         self = cls()
@@ -20,11 +25,6 @@ class Portfolio:
             self.append(stock.Stock(**d))
 
         return self
-
-    def append(self, holding):
-        if not isinstance(holding, stock.Stock):
-            raise TypeError('Expected a Stock instance')
-        self._holdings.append(holding)
 
     def __iter__(self):
         return self._holdings.__iter__()
