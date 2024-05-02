@@ -12,17 +12,11 @@ import tableformat
 
 def read_portfolio(filename, **opts):
     with open(filename) as csv:
-        p = parse_csv(csv,
-                      types=[str, int, float],
-                      select=['name', 'shares', 'price'],
-                      has_headers=True,
-                      **opts)
-        portfolio = [Stock(**line) for line in p]
-        return Portfolio(portfolio)
+        return Portfolio.from_csv(csv, **opts)
 
-def read_prices(filename):
+def read_prices(filename, **opts):
     with open(filename) as csv:
-        return dict(parse_csv(csv, types=[str, float]))
+        return dict(fileparse.parse_csv(csv, types=[str, float], has_headers=False, **opts))
 
 def make_report(portfolio, prices):
     stonks = []
