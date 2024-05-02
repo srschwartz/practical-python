@@ -7,9 +7,11 @@ import sys
 from report import read_portfolio
 
 def portfolio_cost(filename):
+    '''
+        Computes the total cost (shares*price) of a portfolio file
+    '''
     portfolio = read_portfolio(filename)
-    total_cost = sum([p.cost] for p in portfolio)
-    return total_cost
+    return portfolio.total_cost
 
 def main(args):
     if len(args) != 2:

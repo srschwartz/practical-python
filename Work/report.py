@@ -7,13 +7,17 @@ import sys
 from pprint import pprint
 from fileparse import parse_csv
 from stock import Stock
+from portfolio import Portfolio
 import tableformat
 
 def read_portfolio(filename):
     with open(filename) as csv:
-        p = parse_csv(csv, types=[str, int, float], select=['name', 'shares', 'price'], has_headers=True)
+        p = parse_csv(csv,
+                      types=[str, int, float],
+                      select=['name', 'shares', 'price'],
+                      has_headers=True)
         portfolio = [Stock(line['name'], line['shares'], line['price']) for line in p]
-        return portfolio
+        return Portfolio(portfolio)
 
 def read_prices(filename):
     with open(filename) as csv:
