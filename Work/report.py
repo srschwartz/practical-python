@@ -4,11 +4,11 @@
 
 import csv
 import sys
+import tableformat
+import fileparse
 from pprint import pprint
-from fileparse import parse_csv
 from stock import Stock
 from portfolio import Portfolio
-import tableformat
 
 def read_portfolio(filename, **opts):
     with open(filename) as csv:
