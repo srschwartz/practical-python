@@ -3,16 +3,20 @@
 # Exercise 3.3
 
 import csv
+import logging
 
-def parse_csv(filename, types=None, select=None, has_headers=False, delimiter=',', silence_errors=False):
+log = logging.getLogger(__name__)
+
+def parse_csv(filename, types=None, select=None, has_headers=True, delimiter=',', silence_errors=False):
     '''
     Parse a CSV file into a list of records
     '''
-    rows = csv.reader(filename, delimiter=delimiter)
 
     # If select = True and has_headers = False, raise an error
     if select and not has_headers:
         raise RuntimeError("Select argument requires column headers")
+
+    rows = csv.reader(filename, delimiter=delimiter)
 
     # If has_headers, read column headers
     if has_headers:
@@ -42,7 +46,8 @@ def parse_csv(filename, types=None, select=None, has_headers=False, delimiter=',
                 row = [func(val) for func, val in zip(types, row)]
             except ValueError as e:
                 if not silence_errors:
-                    print(f"Could not convert Row {rowno}: {row}, for reason: {e}")
+                    log.warning("Row %d : Could not convert %s", rowno, row)
+                    log.debug("Row %d: Reason %s", rowno, e)
                 continue
 
         # Make a dictionary or a tuple depending on file structure
