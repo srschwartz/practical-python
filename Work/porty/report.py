@@ -2,13 +2,9 @@
 #
 # Exercise 2.4
 
-import csv
-import sys
-import tableformat
-import fileparse
-from pprint import pprint
-from stock import Stock
-from portfolio import Portfolio
+from . import tableformat
+from . import fileparse
+from .portfolio import Portfolio
 
 def read_portfolio(filename, **opts):
     with open(filename) as csv:

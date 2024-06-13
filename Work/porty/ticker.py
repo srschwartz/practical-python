@@ -1,6 +1,5 @@
-from follow import follow
-import tableformat
-import report
+from .follow import follow
+from . import report, tableformat
 import csv
 
 def parse_stock_data(lines):
